@@ -109,6 +109,64 @@ button{
         opacity:0;
     }
 }
+    .player{
+    position:fixed;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    width:90%;
+    max-width:500px;
+    background:rgba(0,0,0,0.6);
+    backdrop-filter:blur(10px);
+    border-radius:15px;
+    padding:15px;
+    color:white;
+    font-size:14px;
+}
+
+.track-info{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:10px;
+}
+
+.cover{
+    width:45px;
+    height:45px;
+    background:#ff4d88;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:10px;
+    font-size:20px;
+}
+
+.controls{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.controls button{
+    background:#ff4d88;
+    border:none;
+    border-radius:50%;
+    width:40px;
+    height:40px;
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+}
+
+#progress{
+    flex:1;
+}
+
+.volume{
+    margin-top:8px;
+    font-size:12px;
+}
 </style>
 </head>
 
@@ -127,7 +185,30 @@ button{
 
     <!-- 🎵 MUSIC -->
     <audio id="bgMusic" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+       <!-- 🎵 SPOTIFY-STYLE PLAYER -->
+<div class="player">
+    <div class="track-info">
+        <div class="cover">💖</div>
+        <div>
+            <div class="title">Love Theme</div>
+            <div class="artist">For You Only</div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="togglePlay()" id="playBtn">▶️</button>
+        <input type="range" id="progress" value="0">
+        <span id="time">0:00</span>
+    </div>
+
+    <div class="volume">
+        🔊 <input type="range" id="volume" min="0" max="1" step="0.01" value="0.4">
+    </div>
+
+    <audio id="bgMusic">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">
+    </audio>
+</div>
     </audio>
 
     <div class="container">
@@ -195,6 +276,43 @@ function heartRain(){
         setTimeout(()=>heart.remove(),5000);
     }
 }
+    const audio = document.getElementById("bgMusic");
+const playBtn = document.getElementById("playBtn");
+const progress = document.getElementById("progress");
+const volume = document.getElementById("volume");
+const time = document.getElementById("time");
+
+// PLAY / PAUSE
+function togglePlay(){
+    if(audio.paused){
+        audio.play();
+        playBtn.innerHTML = "⏸️";
+    } else {
+        audio.pause();
+        playBtn.innerHTML = "▶️";
+    }
+}
+
+// UPDATE PROGRESS
+audio.addEventListener("timeupdate", () => {
+    progress.value = (audio.currentTime / audio.duration) * 100 || 0;
+
+    let minutes = Math.floor(audio.currentTime / 60);
+    let seconds = Math.floor(audio.currentTime % 60);
+    if(seconds < 10) seconds = "0" + seconds;
+
+    time.innerText = `${minutes}:${seconds}`;
+});
+
+// SEEK
+progress.addEventListener("input", () => {
+    audio.currentTime = (progress.value / 100) * audio.duration;
+});
+
+// VOLUME
+volume.addEventListener("input", () => {
+    audio.volume = volume.value;
+});
 </script>
 
 </body>
