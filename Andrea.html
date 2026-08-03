@@ -21,6 +21,7 @@ body{
     background:linear-gradient(135deg,#ff9a9e,#fad0c4,#fbc2eb,#a18cd1);
     background-size:400% 400%;
     animation:bgMove 10s ease infinite;
+    overflow:hidden;
 }
 
 @keyframes bgMove{
@@ -31,7 +32,7 @@ body{
 
 .container{
     background:rgba(255,255,255,0.15);
-    backdrop-filter:blur(15px);
+    backdrop-filter:blur(20px);
     border:1px solid rgba(255,255,255,0.3);
     width:90%;
     max-width:550px;
@@ -44,19 +45,13 @@ body{
 }
 
 @keyframes fadeUp{
-    from{
-        opacity:0;
-        transform:translateY(30px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
+    from{opacity:0; transform:translateY(30px);}
+    to{opacity:1; transform:translateY(0);}
 }
 
 h1{
     font-size:2rem;
-    margin-bottom:15px;
+    margin-bottom:10px;
 }
 
 p{
@@ -68,6 +63,7 @@ p{
     display:flex;
     justify-content:center;
     gap:20px;
+    flex-wrap:wrap;
 }
 
 button{
@@ -80,69 +76,72 @@ button{
     font-weight:bold;
 }
 
+/* YES BUTTON GLOW */
 .yes{
     background:#ff4d88;
     color:white;
+    box-shadow:0 0 15px rgba(255,77,136,.6);
 }
 
+.yes:hover{
+    transform:scale(1.1);
+    box-shadow:0 0 25px rgba(255,77,136,1);
+}
+
+/* NO BUTTON */
 .no{
     background:white;
     color:#ff4d88;
 }
 
-button:hover{
-    transform:translateY(-5px) scale(1.05);
-    box-shadow:0 10px 20px rgba(0,0,0,.2);
-}
-
+/* RESULT TEXT */
 #result{
-    margin-top:35px;
+    margin-top:30px;
     font-size:1.5rem;
     font-weight:bold;
     min-height:40px;
-    animation:fade .4s;
 }
 
-@keyframes fade{
-    from{opacity:0;}
-    to{opacity:1;}
-}
-
+/* HEART BEAT */
 .heart{
     font-size:60px;
     animation:beat 1s infinite;
-    margin-bottom:15px;
 }
 
 @keyframes beat{
     0%,100%{transform:scale(1);}
-    50%{transform:scale(1.2);}
+    50%{transform:scale(1.25);}
 }
-/* Falling Hearts */
 
+/* Falling Hearts */
 .falling-heart{
     position:fixed;
     top:-50px;
-    font-size:30px;
     pointer-events:none;
     animation:fall linear forwards;
     z-index:9999;
 }
 
 @keyframes fall{
-    0%{
-        transform:translateY(0) rotate(0deg);
-        opacity:1;
-    }
-
     100%{
         transform:translateY(110vh) rotate(720deg);
         opacity:0;
     }
 }
-</style>
 
+/* CONFETTI */
+.confetti{
+    position:fixed;
+    width:10px;
+    height:10px;
+    background:red;
+    top:-10px;
+    animation:fall linear forwards;
+}
+
+</style>
 </head>
+
 <body>
 
 <div class="container">
@@ -151,11 +150,11 @@ button:hover{
 
 <h1>A Special Question</h1>
 
-<p><strong>ANDREA DAMIAN, may you be mine forever? pinapatanong ni Louise Alchie Vasquez </strong></p>
+<p><strong>ANDREA DAMIAN, will you be mine forever? 💖<br>— Louise Alchie Vasquez</strong></p>
 
 <div class="buttons">
-    <button class="yes" onclick="answerYes()">Yes 💖</button>
-    <button class="no" id="noBtn" onclick="answerNo()">No 😢</button>
+    <button class="yes" onclick="answerYes()">Yes 💕</button>
+    <button class="no" id="noBtn">No 😢</button>
 </div>
 
 <div id="result"></div>
@@ -164,62 +163,70 @@ button:hover{
 
 <script>
 const noBtn = document.getElementById("noBtn");
+let noScale = 1;
 
-// YES
+// YES CLICK
 function answerYes(){
-
     document.getElementById("result").innerHTML =
-    "💖 You are mine now forever 💖";
+    "💖 AWWW!! You said YES!! Forever starts now 💖";
 
-    createHeartRain();
+    heartRain();
+    confettiBlast();
 }
 
-// NO
-function answerNo(){
-    document.getElementById("result").innerHTML =
-    "😤 You should be mine forever dapat akin ka lang 😤";
-}
+// NO CLICK (gets smaller)
+noBtn.addEventListener("click", () => {
+    noScale -= 0.1;
+    noBtn.style.transform = `scale(${noScale})`;
 
-// No button runs away
+    document.getElementById("result").innerHTML =
+    "😤 Nope is not an option 😤";
+});
+
+// RUNAWAY EFFECT
 noBtn.addEventListener("mouseenter", () => {
 
-    const padding = 20;
-
-    const maxX = window.innerWidth - noBtn.offsetWidth - padding;
-    const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+    const maxX = window.innerWidth - noBtn.offsetWidth;
+    const maxY = window.innerHeight - noBtn.offsetHeight;
 
     noBtn.style.position = "fixed";
     noBtn.style.left = Math.random() * maxX + "px";
     noBtn.style.top = Math.random() * maxY + "px";
-    noBtn.style.transition = ".25s";
 });
 
-// Heart Rain
-function createHeartRain(){
-
-    for(let i = 0; i < 80; i++){
-
+// HEART RAIN
+function heartRain(){
+    for(let i=0;i<60;i++){
         const heart = document.createElement("div");
+        heart.className="falling-heart";
+        heart.innerHTML="❤️";
 
-        heart.className = "falling-heart";
-        heart.innerHTML = "❤️";
-
-        heart.style.left = Math.random() * window.innerWidth + "px";
-
-        heart.style.animationDuration =
-            (Math.random() * 3 + 2) + "s";
-
-        heart.style.fontSize =
-            (Math.random() * 20 + 20) + "px";
+        heart.style.left=Math.random()*window.innerWidth+"px";
+        heart.style.fontSize=(Math.random()*20+20)+"px";
+        heart.style.animationDuration=(Math.random()*3+2)+"s";
 
         document.body.appendChild(heart);
 
-        setTimeout(() => {
-            heart.remove();
-        }, 5000);
+        setTimeout(()=>heart.remove(),5000);
     }
+}
 
+// CONFETTI
+function confettiBlast(){
+    for(let i=0;i<80;i++){
+        const conf = document.createElement("div");
+        conf.className="confetti";
+
+        conf.style.left=Math.random()*window.innerWidth+"px";
+        conf.style.background=`hsl(${Math.random()*360},100%,50%)`;
+        conf.style.animationDuration=(Math.random()*3+2)+"s";
+
+        document.body.appendChild(conf);
+
+        setTimeout(()=>conf.remove(),4000);
+    }
 }
 </script>
+
 </body>
 </html>
