@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Just One Question ❤️</title>
+<title>Secret Love Page ❤️</title>
 
 <style>
 *{
@@ -13,15 +13,48 @@
     font-family:'Poppins',sans-serif;
 }
 
-body{
+/* PASSWORD SCREEN */
+#lockScreen{
     height:100vh;
     display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    color:white;
+}
+
+#lockScreen input{
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    margin-top:10px;
+    text-align:center;
+}
+
+#lockScreen button{
+    margin-top:10px;
+    padding:10px 20px;
+    border:none;
+    border-radius:8px;
+    background:#ff4d88;
+    color:white;
+    cursor:pointer;
+}
+
+/* MAIN PAGE */
+body{
+    overflow:hidden;
+}
+
+.main{
+    display:none;
+    height:100vh;
     justify-content:center;
     align-items:center;
     background:linear-gradient(135deg,#ff9a9e,#fad0c4,#fbc2eb,#a18cd1);
     background-size:400% 400%;
     animation:bgMove 10s ease infinite;
-    overflow:hidden;
 }
 
 @keyframes bgMove{
@@ -33,93 +66,41 @@ body{
 .container{
     background:rgba(255,255,255,0.15);
     backdrop-filter:blur(20px);
-    border:1px solid rgba(255,255,255,0.3);
-    width:90%;
-    max-width:550px;
     padding:40px;
     border-radius:25px;
     text-align:center;
     color:white;
-    box-shadow:0 20px 40px rgba(0,0,0,.25);
-    animation:fadeUp 1s ease;
-}
-
-@keyframes fadeUp{
-    from{opacity:0; transform:translateY(30px);}
-    to{opacity:1; transform:translateY(0);}
-}
-
-h1{
-    font-size:2rem;
-    margin-bottom:10px;
-}
-
-p{
-    font-size:1.2rem;
-    margin-bottom:30px;
-}
-
-.buttons{
-    display:flex;
-    justify-content:center;
-    gap:20px;
-    flex-wrap:wrap;
 }
 
 button{
-    padding:15px 35px;
+    padding:15px 30px;
+    margin:10px;
     border:none;
     border-radius:50px;
     font-size:18px;
     cursor:pointer;
-    transition:.3s;
-    font-weight:bold;
 }
 
-/* YES BUTTON GLOW */
 .yes{
     background:#ff4d88;
     color:white;
-    box-shadow:0 0 15px rgba(255,77,136,.6);
 }
 
-.yes:hover{
-    transform:scale(1.1);
-    box-shadow:0 0 25px rgba(255,77,136,1);
-}
-
-/* NO BUTTON */
 .no{
     background:white;
     color:#ff4d88;
 }
 
-/* RESULT TEXT */
 #result{
-    margin-top:30px;
+    margin-top:20px;
     font-size:1.5rem;
-    font-weight:bold;
-    min-height:40px;
 }
 
-/* HEART BEAT */
-.heart{
-    font-size:60px;
-    animation:beat 1s infinite;
-}
-
-@keyframes beat{
-    0%,100%{transform:scale(1);}
-    50%{transform:scale(1.25);}
-}
-
-/* Falling Hearts */
+/* HEARTS */
 .falling-heart{
     position:fixed;
     top:-50px;
-    pointer-events:none;
     animation:fall linear forwards;
-    z-index:9999;
 }
 
 @keyframes fall{
@@ -128,64 +109,68 @@ button{
         opacity:0;
     }
 }
-
-/* CONFETTI */
-.confetti{
-    position:fixed;
-    width:10px;
-    height:10px;
-    background:red;
-    top:-10px;
-    animation:fall linear forwards;
-}
-
 </style>
 </head>
 
 <body>
 
-<div class="container">
-
-<div class="heart">❤️</div>
-
-<h1>A Special Question</h1>
-
-<p><strong>ANDREA DAMIAN, will you be mine forever? 💖<br>— Louise Alchie Vasquez</strong></p>
-
-<div class="buttons">
-    <button class="yes" onclick="answerYes()">Yes 💕</button>
-    <button class="no" id="noBtn">No 😢</button>
+<!-- 🔐 PASSWORD SCREEN -->
+<div id="lockScreen">
+    <h2>🔐 Enter Secret Password</h2>
+    <input type="password" id="password" placeholder="Enter password">
+    <button onclick="unlock()">Enter 💖</button>
+    <p id="error"></p>
 </div>
 
-<div id="result"></div>
+<!-- 💖 MAIN CONTENT -->
+<div class="main" id="mainPage">
 
+    <!-- 🎵 MUSIC -->
+    <audio id="bgMusic" loop>
+        <source src="https://youtu.be/_LuSokSoDdk?si=6weknUxNbOqkRcDG.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="container">
+        <h1>❤️ A Special Question ❤️</h1>
+
+        <p><strong>ANDREA DAMIAN, will you be mine forever? 💖</strong></p>
+
+        <button class="yes" onclick="answerYes()">Yes 💕</button>
+        <button class="no" id="noBtn">No 😢</button>
+
+        <div id="result"></div>
+    </div>
 </div>
 
 <script>
-const noBtn = document.getElementById("noBtn");
-let noScale = 1;
+const correctPassword = "louise"; // 🔐 CHANGE THIS
 
-// YES CLICK
-function answerYes(){
-    document.getElementById("result").innerHTML =
-    "💖 AWWW!! You said YES!! Forever starts now 💖";
+function unlock(){
+    const input = document.getElementById("password").value;
 
-    heartRain();
-    confettiBlast();
+    if(input === correctPassword){
+        document.getElementById("lockScreen").style.display="none";
+        document.getElementById("mainPage").style.display="flex";
+
+        // 🎵 PLAY MUSIC AFTER UNLOCK (required by browser)
+        document.getElementById("bgMusic").play();
+    } else {
+        document.getElementById("error").innerText = "❌ Wrong password!";
+    }
 }
 
-// NO CLICK (gets smaller)
-noBtn.addEventListener("click", () => {
-    noScale -= 0.1;
-    noBtn.style.transform = `scale(${noScale})`;
-
+// YES
+function answerYes(){
     document.getElementById("result").innerHTML =
-    "😤 Nope is not an option 😤";
-});
+    "💖 You said YES!! Forever starts now 💖";
 
-// RUNAWAY EFFECT
+    heartRain();
+}
+
+// NO RUNAWAY
+const noBtn = document.getElementById("noBtn");
+
 noBtn.addEventListener("mouseenter", () => {
-
     const maxX = window.innerWidth - noBtn.offsetWidth;
     const maxY = window.innerHeight - noBtn.offsetHeight;
 
@@ -208,22 +193,6 @@ function heartRain(){
         document.body.appendChild(heart);
 
         setTimeout(()=>heart.remove(),5000);
-    }
-}
-
-// CONFETTI
-function confettiBlast(){
-    for(let i=0;i<80;i++){
-        const conf = document.createElement("div");
-        conf.className="confetti";
-
-        conf.style.left=Math.random()*window.innerWidth+"px";
-        conf.style.background=`hsl(${Math.random()*360},100%,50%)`;
-        conf.style.animationDuration=(Math.random()*3+2)+"s";
-
-        document.body.appendChild(conf);
-
-        setTimeout(()=>conf.remove(),4000);
     }
 }
 </script>
